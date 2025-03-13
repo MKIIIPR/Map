@@ -18,9 +18,33 @@ const db = mysql.createConnection({
 db.connect((err) => {
     if (err) {
         console.error('Fehler bei der Verbindung zur Datenbank: ', err);
-        return;
+    } else {
+        console.log('Erfolgreich mit der MySQL-Datenbank verbunden!');
     }
-    console.log('Erfolgreich mit der MySQL-Datenbank verbunden!');
+});
+
+// **Landing Page**
+app.get('/', (req, res) => {
+    try {
+        // Verbindungsprüfung, wenn die DB-Verbindung besteht
+        db.query('SELECT 1', (err, results) => {
+            if (err) {
+                res.status(500).send('Datenbankverbindung fehlgeschlagen!');
+            } else {
+                res.send(`
+                    <h1>Hallo Welt!</h1>
+                    <p>Verbindung zur Datenbank besteht!</p>
+                `);
+            }
+        });
+    } catch (err) {
+        // Falls beim Überprüfen der Verbindung ein Fehler auftritt
+        console.error('Fehler bei der Verbindung zur Datenbank: ', err);
+        res.status(500).send(`
+            <h1>Hallo Welt!</h1>
+            <p>Datenbankverbindung fehlgeschlagen!</p>
+        `);
+    }
 });
 
 // **1. CREATE: Neue Ressourcenposition hinzufügen**
