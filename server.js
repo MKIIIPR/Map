@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
+const path = require("path");
 const mysql = require('mysql2');
-const app = express();
-const port = 3306;
 
-// Middleware, um JSON-Daten zu verarbeiten
-app.use(express.json());
+const app = express();
+const port = 3000;
+
+// Statische Dateien freigeben
+app.use(express.static(path.join(__dirname, "public")));
 
 // MySQL-Datenbankverbindung
 const db = mysql.createConnection({
@@ -176,5 +178,5 @@ app.delete('/api/resources/:id', (req, res) => {
 
 // API-Server starten
 app.listen(port, () => {
-    console.log(`API läuft unter http://localhost:${port}`);
+    console.log(`Server läuft auf http://localhost:${port}`);
 });
