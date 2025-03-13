@@ -20,7 +20,7 @@ const db = mysql.createConnection({
     database: 'aocgathering_' // Deine Datenbankname
 });
 
-// Überprüfen der Verbindung zur Datenbank
+// ?berpr?fen der Verbindung zur Datenbank
 db.connect((err) => {
     if (err) {
         console.error('Fehler bei der Verbindung zur Datenbank: ', err);
@@ -32,7 +32,7 @@ db.connect((err) => {
 // **Landing Page**
 app.get('/', (req, res) => {
     try {
-        // Verbindungsprüfung, wenn die DB-Verbindung besteht
+        // Verbindungspr?fung, wenn die DB-Verbindung besteht
         db.query('SELECT 1', (err, results) => {
             if (err) {
                 res.status(500).send('Datenbankverbindung fehlgeschlagen!');
@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
             }
         });
     } catch (err) {
-        // Falls beim Überprüfen der Verbindung ein Fehler auftritt
+        // Falls beim ?berpr?fen der Verbindung ein Fehler auftritt
         console.error('Fehler bei der Verbindung zur Datenbank: ', err);
         res.status(500).send(`
             <h1>Hallo Welt!</h1>
@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
     }
 });
 
-// **1. CREATE: Neue Ressourcenposition hinzufügen**
+// **1. CREATE: Neue Ressourcenposition hinzuf?gen**
 app.post('/api/resource_positions', (req, res) => {
     const {
         id,
@@ -70,18 +70,18 @@ app.post('/api/resource_positions', (req, res) => {
         return res.status(400).json({ message: 'Resource und ID sind erforderlich!' });
     }
 
-    // Die Ressource in die Datenbank einfügen
+    // Die Ressource in die Datenbank einf?gen
     const resourceQuery = 'INSERT INTO resources (id, name, type, respawnTimer) VALUES (?, ?, ?, ?)';
     db.query(resourceQuery, [resource.id, resource.name, resource.type, resource.respawnTimer], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Fehler beim Erstellen der Ressource' });
         }
 
-        // Berechne respawnAt (respawnTimer in Minuten hinzufügen)
+        // Berechne respawnAt (respawnTimer in Minuten hinzuf?gen)
         const lastHarvestDate = new Date(lastHarvest);
         const respawnAt = new Date(lastHarvestDate.getTime() + (resource.respawnTimer * 60000));
 
-        // Die Ressourcenposition in die Datenbank einfügen
+        // Die Ressourcenposition in die Datenbank einf?gen
         const query = `
       INSERT INTO resource_positions 
       (id, resource_id, description, posX, posY, rarity, img, lastHarvest, respawnAt) 
@@ -152,42 +152,35 @@ app.put('/api/resource_positions/:id', (req, res) => {
     });
 });
 
-// **5. DELETE: Eine Ressourcenposition löschen**
+// **5. DELETE: Eine Ressourcenposition l?schen**
 app.delete('/api/resource_positions/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM resource_positions WHERE id = ?', [id], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Fehler beim Löschen der Ressourcenposition' });
+            return res.status(500).json({ message: 'Fehler beim L?schen der Ressourcenposition' });
         }
         if (results.affectedRows === 0) {
             return res.status(404).json({ message: 'Ressourcenposition nicht gefunden' });
         }
-        res.status(200).json({ message: 'Ressourcenposition gelöscht' });
+        res.status(200).json({ message: 'Ressourcenposition gel?scht' });
     });
 });
 
-// **6. DELETE: Eine Ressource löschen**
+// **6. DELETE: Eine Ressource l?schen**
 app.delete('/api/resources/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM resources WHERE id = ?', [id], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Fehler beim Löschen der Ressource' });
+            return res.status(500).json({ message: 'Fehler beim L?schen der Ressource' });
         }
         if (results.affectedRows === 0) {
             return res.status(404).json({ message: 'Ressource nicht gefunden' });
         }
-        res.status(200).json({ message: 'Ressource gelöscht' });
+        res.status(200).json({ message: 'Ressource gel?scht' });
     });
 });
 
 // API-Server starten
-// app.listen(port, () => {
-    // console.log(`Server läuft auf http://localhost:${port}`);
-// });
-
-http.createServer(function(request, response) {
-  response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.end("Hello, World!\n");
-}).listen(port);
-
-console.log(`App is running... (port: ${port})`);
+app.listen(port, () => {
+  console.log(`Server l?uft auf http://localhost:${port}`);
+});
