@@ -3,7 +3,11 @@ const path = require("path");
 const mysql = require('mysql2');
 
 const app = express();
-const port = 3000;
+//const port = 3000;
+
+const http = require('http');
+
+const port = process.env.PORT || 3000;
 
 // Statische Dateien freigeben
 app.use(express.static(path.join(__dirname, "public")));
@@ -177,6 +181,13 @@ app.delete('/api/resources/:id', (req, res) => {
 });
 
 // API-Server starten
-app.listen(port, () => {
-    console.log(`Server läuft auf http://localhost:${port}`);
-});
+// app.listen(port, () => {
+    // console.log(`Server läuft auf http://localhost:${port}`);
+// });
+
+http.createServer(function(request, response) {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.end("Hello, World!\n");
+}).listen(port);
+
+console.log(`App is running... (port: ${port})`);
