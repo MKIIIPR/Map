@@ -106,6 +106,30 @@ app.get('/api/resource_positions', (req, res) => {
     });
 });
 
+// **2. READ: Alle Ressourcen abrufen**
+app.get('/api/resources', (req, res) => {
+    db.query('SELECT * FROM resources', (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Fehler beim Abrufen der Daten' });
+        }
+        res.json(results);
+    });
+});
+
+// **3. READ: Eine spezifische Ressourcenposition abrufen**
+app.get('/api/resources/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM resources WHERE id = ?', [id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Fehler beim Abrufen der Daten' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Ressourcenposition nicht gefunden' });
+        }
+        res.json(results[0]);
+    });
+});
+
 // **3. READ: Eine spezifische Ressourcenposition abrufen**
 app.get('/api/resource_positions/:id', (req, res) => {
     const { id } = req.params;
