@@ -53,46 +53,23 @@ app.get('/', (req, res) => {
     }
 });
 
-// **1. CREATE: Neue Ressourcenposition hinzuf?gen**
+// **1. CREATE: Neue Ressourcenposition hinzufügen**
 app.post('/api/resource_positions', (req, res) => {
-    const {
-        id,
-        resource,
-        desc,
-        posX,
-        posY,
-        rarity,
-        img,
-        lastHarvest
-    } = req.body;
+    const { id, resourceId, description, lat, lng, rarity, image, lastHarvest } = req.body;
 
-    if (!resource || !id) {
-        return res.status(400).json({ message: 'Resource und ID sind erforderlich!' });
+    if (!resourceId || !id) {
+        return res.status(400).json({ message: 'ResourceId und ID sind erforderlich!' });
     }
 
-    // Die Ressource in die Datenbank einf?gen
-    const resourceQuery = 'INSERT INTO resources (id, name, type, respawnTimer) VALUES (?, ?, ?, ?)';
-    db.query(resourceQuery, [resource.id, resource.name, resource.type, resource.respawnTimer], (err, results) => {
+    const query = 
+        INSERT INTO resourcePosition (Id, ResourceId, Description, Lat, Lng, Rarity, Image, LastHarvest) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+    db.query(query, [id, resourceId, description, lat, lng, rarity, image, lastHarvest], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Fehler beim Erstellen der Ressource' });
+            return res.status(500).json({ message: 'Fehler beim Erstellen der Ressourcenposition', error: err });
         }
-
-        // Berechne respawnAt (respawnTimer in Minuten hinzuf?gen)
-        const lastHarvestDate = new Date(lastHarvest);
-        const respawnAt = new Date(lastHarvestDate.getTime() + (resource.respawnTimer * 60000));
-
-        // Die Ressourcenposition in die Datenbank einf?gen
-        const query = `
-      INSERT INTO resource_positions 
-      (id, resource_id, description, posX, posY, rarity, img, lastHarvest, respawnAt) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        db.query(query, [id, resource.id, desc, posX, posY, rarity, img, lastHarvestDate, respawnAt], (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: 'Fehler beim Erstellen der Ressourcenposition' });
-            }
-            res.status(201).json({ message: 'Ressourcenposition erstellt' });
-        });
+        res.status(201).json({ message: 'Ressourcenposition erstellt' });
     });
 });
 
