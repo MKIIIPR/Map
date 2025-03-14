@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const mysql = require('mysql2');
+const cors = require("cors");
 
 const app = express();
 //const port = 3000;
@@ -11,6 +12,7 @@ const port = process.env.PORT || 3000;
 
 // Statische Dateien freigeben
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors()); 
 
 // MySQL-Datenbankverbindung
 const db = mysql.createConnection({
