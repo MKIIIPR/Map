@@ -61,9 +61,10 @@ app.post('/api/resource_positions', (req, res) => {
         return res.status(400).json({ message: 'ResourceId und ID sind erforderlich!' });
     }
 
-    const query = 
-        INSERT INTO resourcePosition (Id, ResourceId, Description, Lat, Lng, Rarity, Image, LastHarvest) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+	const query = `
+		INSERT INTO resourcePosition (Id, ResourceId, Description, Lat, Lng, Rarity, Image, LastHarvest) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+	`;
 
     db.query(query, [id, resourceId, description, lat, lng, rarity, image, lastHarvest], (err, results) => {
         if (err) {
