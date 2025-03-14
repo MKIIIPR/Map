@@ -76,7 +76,7 @@ app.post('/api/resource_positions', (req, res) => {
 
 // **2. READ: Alle Ressourcenpositionen abrufen**
 app.get('/api/resource_positions', (req, res) => {
-    db.query('SELECT * FROM resource_positions', (err, results) => {
+    db.query('SELECT * FROM resourcePosition', (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Fehler beim Abrufen der Daten' });
         }
@@ -111,7 +111,7 @@ app.get('/api/resources/:id', (req, res) => {
 // **3. READ: Eine spezifische Ressourcenposition abrufen**
 app.get('/api/resource_positions/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT * FROM resource_positions WHERE id = ?', [id], (err, results) => {
+    db.query('SELECT * FROM resourcePosition WHERE id = ?', [id], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Fehler beim Abrufen der Daten' });
         }
@@ -125,25 +125,14 @@ app.get('/api/resource_positions/:id', (req, res) => {
 // **4. UPDATE: Eine Ressourcenposition aktualisieren**
 app.put('/api/resource_positions/:id', (req, res) => {
     const { id } = req.params;
-    const {
-        resource,
-        desc,
-        posX,
-        posY,
-        rarity,
-        img,
-        lastHarvest
-    } = req.body;
-
-    const lastHarvestDate = new Date(lastHarvest);
-    const respawnAt = new Date(lastHarvestDate.getTime() + (resource.respawnTimer * 60000));
+    const { resourceId, description, lat, lng, rarity, image, lastHarvest } = req.body;
 
     const query = `
-    UPDATE resource_positions 
-    SET resource_id = ?, description = ?, posX = ?, posY = ?, rarity = ?, img = ?, lastHarvest = ?, respawnAt = ? 
+    UPDATE resourcePosition 
+    SET resourceid = ?, description = ?, lat = ?, lng = ?, rarity = ?, image = ?, lastHarvest = ?
     WHERE id = ?`;
 
-    db.query(query, [resource.id, desc, posX, posY, rarity, img, lastHarvestDate, respawnAt, id], (err, results) => {
+    db.query(query, [resourceid, description, lat, lng, rarity, image, lastHarvest, id], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Fehler beim Aktualisieren der Ressourcenposition' });
         }
@@ -157,7 +146,7 @@ app.put('/api/resource_positions/:id', (req, res) => {
 // **5. DELETE: Eine Ressourcenposition l?schen**
 app.delete('/api/resource_positions/:id', (req, res) => {
     const { id } = req.params;
-    db.query('DELETE FROM resource_positions WHERE id = ?', [id], (err, results) => {
+    db.query('DELETE FROM resourcePosition WHERE id = ?', [id], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Fehler beim L?schen der Ressourcenposition' });
         }
